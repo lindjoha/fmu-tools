@@ -1,6 +1,7 @@
 """Testing excel2dict"""
-
 import os
+from packaging import version
+
 import pytest
 
 import numpy as np
@@ -24,6 +25,10 @@ MOCK_DESIGNINPUT = pd.DataFrame(
 )
 
 
+@pytest.mark.skipif(
+    version.parse(pd.__version__) < version.parse("0.25.0"),
+    reason="Pandas 0.25.0 is required for fmudesign",
+)
 def test_excel2dict_design(tmpdir):
     """Test that we can convert an Excelfile to a dictionary"""
     tmpdir.chdir()
@@ -78,6 +83,10 @@ def test_excel2dict_design(tmpdir):
     assert "RMS_SEED" in "".join(open("dictdesign.yaml").readlines())
 
 
+@pytest.mark.skipif(
+    version.parse(pd.__version__) < version.parse("0.25.0"),
+    reason="Pandas 0.25.0 is required for fmudesign",
+)
 def test_duplicate_sensname_exception(tmpdir):
     """Test that exceptions are raised for erroneous sensnames"""
     # pylint: disable=abstract-class-instantiated
@@ -107,6 +116,10 @@ def test_duplicate_sensname_exception(tmpdir):
         excel2dict_design("designinput3.xlsx")
 
 
+@pytest.mark.skipif(
+    version.parse(pd.__version__) < version.parse("0.25.0"),
+    reason="Pandas 0.25.0 is required for fmudesign",
+)
 def test_strip_spaces(tmpdir):
     """Spaces before and after parameter names are probabaly
     invisible user errors in Excel sheets. Remove them."""
@@ -145,6 +158,10 @@ def test_strip_spaces(tmpdir):
     assert [par.strip() for par in def_params] == def_params
 
 
+@pytest.mark.skipif(
+    version.parse(pd.__version__) < version.parse("0.25.0"),
+    reason="Pandas 0.25.0 is required for fmudesign",
+)
 def test_mixed_senstype_exception(tmpdir):
     """Test that exceptions are raised for mixups in user input on types"""
     # pylint: disable=abstract-class-instantiated
@@ -179,3 +196,50 @@ def test_has_value():
 
     # This possibly makes no sense, but is the current implementation:
     assert _has_value(None)
+
+
+@pytest.mark.skipif(
+    version.parse(pd.__version__) < version.parse("0.25.0"),
+    reason="Pandas 0.25.0 is required for fmudesign",
+)
+def test_background_sheet(tmpdir):
+    """Test loading background values from a sheet"""
+    tmpdir.chdir()
+    general_input = pd.DataFrame(
+        data=[
+            ["designtype", "onebyone"],
+            ["repeats", 3],
+            ["rms_seeds", "default"],
+            ["background", "backgroundsheet"],
+            ["distribution_seed", "None"],
+        ]
+    )
+    defaultvalues = pd.DataFrame(
+        columns=["param_name", "default_value"], data=[["extraseed", "0"]]
+    )
+    background = pd.DataFrame(
+        data=[
+            ["param_name", "dist_name", "dist_param1"],
+            ["extraseed", "scenario", "30,40,50"],
+        ]
+    )
+
+    writer = pd.ExcelWriter("designinput.xlsx", engine="openpyxl")
+    general_input.to_excel(writer, sheet_name="general_input", index=False, header=None)
+    MOCK_DESIGNINPUT.to_excel(
+        writer, sheet_name="design_input", index=False, header=None
+    )
+    defaultvalues.to_excel(writer, sheet_name="defaultvalues", index=False)
+    background.to_excel(writer, sheet_name="backgroundsheet", index=False, header=None)
+    writer.save()
+
+    dict_design = excel2dict_design("designinput.xlsx")
+
+    # Assert it has been interpreted correctly from input files:
+    assert dict_design["background"]["parameters"]["extraseed"] == [
+        "scenario",
+        ["30,40,50"],
+        None,
+    ]
+    assert dict_design["repeats"] == 3
+    assert dict_design["defaultvalues"]["extraseed"] == 0
