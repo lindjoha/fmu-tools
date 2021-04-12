@@ -287,9 +287,7 @@ def set_data_empty(config: Dict):
             print(e)
 
     def set_surfaces(
-        project: _roxar.Project,
-        surf_type: str,
-        dict_val: Union[List, Dict]
+        project: _roxar.Project, surf_type: str, dict_val: Union[List, Dict]
     ):
         """Set empty a group of surfaces.
 
@@ -322,9 +320,7 @@ def set_data_empty(config: Dict):
                 if isinstance(surf_names, str):
                     if surf_names == "all":
                         for surface in surfaces:
-                            set_safe_empty(
-                                project, surf_type, surface.name, data_type
-                            )
+                            set_safe_empty(project, surf_type, surface.name, data_type)
                     else:
                         raise ValueError(
                             "keyword '"
