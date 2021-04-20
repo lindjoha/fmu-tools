@@ -332,18 +332,16 @@ def set_data_empty(config: Dict):
         raise TypeError("Argument must be a Python dictionary!")
     assert "project" in config.keys(), "Input dict must contain key 'project'!"
     project = config["project"]
-    assert "value" in config.keys(), "Input dict must contain key 'value'!"
-    value = config["value"]
 
     # HORIZON DATA
     if "horizons" in config.keys():
         print("Set empty horizons...")
-        set_surfaces_empty(project, "horizons", config["horizons"])
+        _set_surfaces_empty(project, "horizons", config["horizons"])
 
     # ZONE DATA
     if "zones" in config.keys():
         print("Set empty zones...")
-        set_surfaces_empty(project, "zones", config["zones"])
+        _set_surfaces_empty(project, "zones", config["zones"])
 
     # GRID MODEL DATA
     if "grid_models" in config.keys():
