@@ -78,7 +78,7 @@ grid_models
 
 .. code-block:: python
 
-    from fmu.tools import qcreset
+    from fmu.tools.rms import qcreset
     import roxar
 
     SETUP = {
@@ -175,7 +175,7 @@ grid_models
 
 .. code-block:: python
 
-    from fmu.tools import qcreset
+    from fmu.tools.rms import qcreset
     import roxar
 
     SETUP = {
@@ -207,7 +207,7 @@ grid_models
 
 .. code-block:: python
 
-    from fmu.tools import qcreset
+    from fmu.tools.rms import qcreset
     import roxar
 
     # We split the work into 2 different setups here in order to use different
