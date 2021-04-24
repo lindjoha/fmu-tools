@@ -5,7 +5,6 @@ try:
     import _roxar  # type: ignore
 except ModuleNotFoundError:
     warnings.warn("This script only supports interactive RMS usage", UserWarning)
-    pass
 
 
 def _set_safe_value(
@@ -20,6 +19,7 @@ def _set_safe_value(
         name: the name the of surface.
         value: the value (int or float) to be assigned to the surface
     """
+
     try:
         if surf_type == "horizons":
             surf = project.horizons[name][data_type]
