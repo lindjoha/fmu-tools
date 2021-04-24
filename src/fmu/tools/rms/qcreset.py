@@ -1,15 +1,14 @@
-from typing import List, Dict, Union
+from typing import List, Dict, Union, Any
 import warnings
 
 try:
     import _roxar  # type: ignore
 except ModuleNotFoundError:
-    warnings.warn("This script only supports interactive RMS usage")
+    warnings.warn("This script only supports interactive RMS usage", UserWarning)
     pass
 
-
 def _set_safe_value(
-    project: _roxar.Project, surf_type: str, name: str, data_type: str, value: float
+    project: Any, surf_type: str, name: str, data_type: str, value: float
 ):
     """Set the horizon or zone surface to the defined value.
 
@@ -34,7 +33,7 @@ def _set_safe_value(
         print(e)
 
 
-def _set_safe_empty(project: _roxar.Project, surf_type: str, name: str, data_type: str):
+def _set_safe_empty(project: Any, surf_type: str, name: str, data_type: str):
     """Set empty the horizon or zone surface.
 
     Args:
@@ -56,7 +55,7 @@ def _set_safe_empty(project: _roxar.Project, surf_type: str, name: str, data_typ
 
 
 def _set_surfaces_value(
-    project: _roxar.Project,
+    project: Any,
     surf_type: str,
     dict_val: Union[List, Dict],
     value: float,
@@ -112,7 +111,7 @@ def _set_surfaces_value(
 
 
 def _set_surfaces_empty(
-    project: _roxar.Project, surf_type: str, dict_val: Union[List, Dict]
+    project: Any, surf_type: str, dict_val: Union[List, Dict]
 ):
     """Set empty a group of surfaces.
 
@@ -212,11 +211,13 @@ def set_data_constant(config: Dict):
             dictionary, the method will apply to all properties within these
             grid models.
     """
-
     if not isinstance(config, dict):
         raise TypeError("Argument must be a Python dictionary!")
     assert "project" in config.keys(), "Input dict must contain key 'project'!"
     project = config["project"]
+    if not isinstance (project, _roxar.Project):
+        raise RuntimeError("This run must be ran in an RoxAPI environment!")
+
     assert "value" in config.keys(), "Input dict must contain key 'value'!"
     value = config["value"]
 
@@ -332,6 +333,8 @@ def set_data_empty(config: Dict):
         raise TypeError("Argument must be a Python dictionary!")
     assert "project" in config.keys(), "Input dict must contain key 'project'!"
     project = config["project"]
+    if not isinstance (project, _roxar.Project):
+        raise RuntimeError("This run must be ran in an RoxAPI environment!")
 
     # HORIZON DATA
     if "horizons" in config.keys():
