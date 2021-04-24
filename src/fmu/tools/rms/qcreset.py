@@ -7,6 +7,7 @@ except ModuleNotFoundError:
     warnings.warn("This script only supports interactive RMS usage", UserWarning)
     pass
 
+
 def _set_safe_value(
     project: Any, surf_type: str, name: str, data_type: str, value: float
 ):
@@ -110,9 +111,7 @@ def _set_surfaces_value(
         )
 
 
-def _set_surfaces_empty(
-    project: Any, surf_type: str, dict_val: Union[List, Dict]
-):
+def _set_surfaces_empty(project: Any, surf_type: str, dict_val: Union[List, Dict]):
     """Set empty a group of surfaces.
 
     Args:
@@ -215,7 +214,7 @@ def set_data_constant(config: Dict):
         raise TypeError("Argument must be a Python dictionary!")
     assert "project" in config.keys(), "Input dict must contain key 'project'!"
     project = config["project"]
-    if not isinstance (project, _roxar.Project):
+    if not isinstance(project, _roxar.Project):
         raise RuntimeError("This run must be ran in an RoxAPI environment!")
 
     assert "value" in config.keys(), "Input dict must contain key 'value'!"
@@ -333,7 +332,7 @@ def set_data_empty(config: Dict):
         raise TypeError("Argument must be a Python dictionary!")
     assert "project" in config.keys(), "Input dict must contain key 'project'!"
     project = config["project"]
-    if not isinstance (project, _roxar.Project):
+    if not isinstance(project, _roxar.Project):
         raise RuntimeError("This run must be ran in an RoxAPI environment!")
 
     # HORIZON DATA
